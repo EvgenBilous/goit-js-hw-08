@@ -36,10 +36,44 @@ form.addEventListener('submit', handleSubmit);
 
 function handleSubmit(event) {
   event.preventDefault();
+  if (Object.keys(userData).length === 0) {
+    return;
+  }
+  console.log(event.currentTarget.elements);
+
+  const { email, message } = event.currentTarget.elements;
+
+  if (!email.value || !message.value) {
+    return alert('One of the fields is empty');
+  }
   console.log(userData);
   localStorage.removeItem(LOCAL_KEY); //чистимо сторедж
   event.currentTarget.reset(); // clean form
+  localStorage.clear();
+
   userData = {}; // clean user's data
+}
+
+function checkForm(form) {
+  // validation fails if the input is blank
+  if (formvalue == '') {
+    alert('Error: Input is empty!');
+    form.email.focus();
+    return false;
+  }
+
+  // regular expression to match only alphanumeric characters and spaces
+  var re = /^[\w ]+$/;
+
+  // validation fails if the input doesn't match our regular expression
+  if (!re.test(form.inputfield.value)) {
+    alert('Error: Input contains invalid characters!');
+    form.inputfield.focus();
+    return false;
+  }
+
+  // validation was successful
+  return true;
 }
 
 function handleInput(event) {
@@ -51,15 +85,32 @@ function handleInput(event) {
   save(LOCAL_KEY, userData);
 }
 
+const formFields = document.querySelector('input');
+function validateForm() {
+  if (formFields.value == '') {
+    alert('no data');
+    return;
+  }
+}
+
+// form.addEventListener('submit', e => {
+//   if (email.value === '' || email.value === null) {
+//     emailMessage.innerHTML = 'where is the email';
+//     e.preventDefault();
+//   } else {
+//     return true;
+//   }
+// });
+
 function loadData() {
   const lsData = load(LOCAL_KEY);
-  console.log(lsData);
+  //console.log(lsData);
   if (!lsData) return; //перевірка на пустий локалстоердж
   const formItems = form.elements;
 
   for (const key in lsData) {
     if (lsData.hasOwnProperty(key)) {
-      console.log(key);
+      //console.log(key);
       formItems[key].value = lsData[key];
       if (lsData[key]) {
         userData[key] = lsData[key]; //дефолтні значення післі завантаження форми призначаємо їх в локалсторедж
@@ -67,11 +118,4 @@ function loadData() {
     }
   }
 }
-console.log(1);
-console.log(2);
-setTimeout(() => {
-  console.log(3);
-}, 0);
-console.log(4);
-
 loadData();
